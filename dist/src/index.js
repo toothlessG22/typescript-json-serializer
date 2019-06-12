@@ -157,7 +157,7 @@ function convertDataToProperty(instance, key, value, data) {
     propertyType = predicate ? predicate(data) : propertyType;
     if (dataPredicate) {
         data = dataPredicate(data);
-        if (isSerializable(propertyType)) {
+        if (!isSerializable(propertyType)) {
             return castSimpleData(propertyType.name, data);
         }
     }
