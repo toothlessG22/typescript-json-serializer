@@ -144,7 +144,7 @@ function convertDataToProperty(instance: Function, key: string, value: Metadata,
     const type: Metadata = Reflect.getMetadata(designType, instance, key);
     const isArray: boolean = type.name.toLowerCase() === Type.Array;
     const predicate: Function = value['predicate'];
-    const dataPredicate: Function = value['predicate'];
+    const dataPredicate: Function = value['dataPredicate'];
     let propertyType: any = value['type'] || type;
     const isSerializableProperty: boolean = isSerializable(propertyType);
 
@@ -159,7 +159,7 @@ function convertDataToProperty(instance: Function, key: string, value: Metadata,
                 propertyType = predicate(d);
             }
             if (dataPredicate) {
-                d = dataPredicate();
+                d = dataPredicate(d);
                 if (isSerializable(propertyType)) {
                     return castSimpleData(propertyType.name, d);
                 }
@@ -199,7 +199,7 @@ function getJsonPropertyValue(key: string, args: string | { name?: string, type:
     }
 
     const name: string = typeof args === Type.String ? args : args['name'] ? args['name'] : key.toString();
-    return args['predicate'] ? { name, predicate: args['predicate'] } : args['dataPredicate'] ? { name, predicate: args['dataPredicate'] } : { name, type: args['type'] };
+    return args['predicate'] ? { name, predicate: args['predicate'] } : args['dataPredicate'] ? { name, dataPredicate: args['dataPredicate'] } : { name, type: args['type'] };
 }
 
 /**
