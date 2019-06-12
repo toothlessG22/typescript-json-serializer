@@ -79,11 +79,11 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
     const hasMap: boolean = Reflect.hasMetadata(apiMapInstanceName, instance);
     let instanceMap: { [id: string]: Metadata } = {};
 
-    if (!hasMap) {
+    if (!hasMap && baseClassName === undefined) {
         return json;
+    } else {
+        instanceMap = Reflect.getMetadata(apiMapInstanceName, instance);
     }
-
-    instanceMap = Reflect.getMetadata(apiMapInstanceName, instance);
 
     if (baseClassName !== undefined) {
         const baseClassMap: { [id: string]: any; } = Reflect.getMetadata(`${apiMap}${baseClassName}`, instance);

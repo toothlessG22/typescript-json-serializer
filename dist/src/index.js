@@ -79,10 +79,12 @@ function serialize(instance, removeUndefined) {
     var apiMapInstanceName = "" + apiMap + instanceName;
     var hasMap = Reflect.hasMetadata(apiMapInstanceName, instance);
     var instanceMap = {};
-    if (!hasMap) {
+    if (!hasMap && baseClassName === undefined) {
         return json;
     }
-    instanceMap = Reflect.getMetadata(apiMapInstanceName, instance);
+    else {
+        instanceMap = Reflect.getMetadata(apiMapInstanceName, instance);
+    }
     if (baseClassName !== undefined) {
         var baseClassMap = Reflect.getMetadata("" + apiMap + baseClassName, instance);
         instanceMap = __assign({}, instanceMap, baseClassMap);
