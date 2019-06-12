@@ -10,7 +10,7 @@ const designType: string = 'design:type';
 /**
  * Decorator JsonProperty
  */
-export function JsonProperty(args?: string | { name?: string, type: Function } | { name?: string, predicate: Function } | { name?: string, dataPredicate: string }): Function {
+export function JsonProperty(args?: string | { name?: string, type: Function } | { name?: string, predicate: Function } | { name?: string, dataPredicate: Function }): Function {
     return (target: Object, key: string): void => {
 
         let map: { [id: string]: Metadata; } = {};
