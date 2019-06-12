@@ -1,8 +1,5 @@
 import 'reflect-metadata';
-/**
- * Decorator JsonProperty
- */
-export declare function JsonProperty(args?: string | {
+declare type JsonPropertyInput = string | {
     name?: string;
     type: Function;
 } | {
@@ -11,7 +8,15 @@ export declare function JsonProperty(args?: string | {
 } | {
     name?: string;
     dataPredicate: Function;
-}): Function;
+} | {
+    name?: string;
+    type: Function;
+    dataPredicate: Function;
+};
+/**
+ * Decorator JsonProperty
+ */
+export declare function JsonProperty(args?: JsonPropertyInput): Function;
 /**
  * Decorator Serializable
  */
@@ -24,3 +29,4 @@ export declare function deserialize(json: any, type: any): any;
  * Function to serialize a class into json
  */
 export declare function serialize(instance: any, removeUndefined?: boolean): any;
+export {};

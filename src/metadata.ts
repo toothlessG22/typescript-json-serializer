@@ -1,3 +1,11 @@
-type Metadata = { name: string, type: Function } | { name: string, predicate: Function } | { name: string, dataPredicate: Function };
+export class Metadata {
+    public name: string;
+    public type: Function;
+    public predicate: Function;
+    public dataPredicate: Function;
 
+    public constructor() {
+
+    }
+}
 export default Metadata;

@@ -1,11 +1,8 @@
-declare type Metadata = {
+export declare class Metadata {
     name: string;
     type: Function;
-} | {
-    name: string;
     predicate: Function;
-} | {
-    name: string;
     dataPredicate: Function;
-};
+    constructor();
+}
 export default Metadata;

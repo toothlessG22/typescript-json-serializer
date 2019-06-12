@@ -12,6 +12,7 @@ var __assign = (this && this.__assign) || function () {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
+var metadata_1 = require("./metadata");
 var type_1 = require("./type");
 var apiMap = 'api:map:';
 var apiMapSerializable = apiMap + "serializable";
@@ -176,15 +177,17 @@ function isSerializable(type) {
 /**
  * Function to transform the JsonProperty value into an object like {name: string, type: Function}
  */
-function getJsonPropertyValue(key, args) {
-    if (!args) {
-        return {
-            name: key.toString(),
-            type: undefined
-        };
+function getJsonPropertyValue(key, jsonPropertyInput) {
+    var metadata = new metadata_1.default();
+    if (!jsonPropertyInput) {
+        metadata.name = key.toString();
+        return metadata;
     }
-    var name = typeof args === type_1.default.String ? args : args['name'] ? args['name'] : key.toString();
-    return args['predicate'] ? { name: name, predicate: args['predicate'] } : args['dataPredicate'] ? { name: name, dataPredicate: args['dataPredicate'] } : { name: name, type: args['type'] };
+    metadata.name = typeof jsonPropertyInput === type_1.default.String ? jsonPropertyInput : jsonPropertyInput['name'] ? jsonPropertyInput['name'] : key.toString();
+    metadata.type = jsonPropertyInput['type'];
+    metadata.predicate = jsonPropertyInput['predicate'];
+    metadata.dataPredicate = jsonPropertyInput['dataPredicate'];
+    return metadata;
 }
 /**
  * Function to cast simple type data into the real class property type

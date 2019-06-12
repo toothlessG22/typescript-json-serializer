@@ -7,10 +7,16 @@ const apiMap: string = 'api:map:';
 const apiMapSerializable: string = `${apiMap}serializable`;
 const designType: string = 'design:type';
 
+type JsonPropertyInput = string |
+{ name?: string, type: Function } |
+{ name?: string, predicate: Function } |
+{ name?: string, dataPredicate: Function } |
+{ name?: string, type: Function, dataPredicate: Function };
+
 /**
  * Decorator JsonProperty
  */
-export function JsonProperty(args?: string | { name?: string, type: Function } | { name?: string, predicate: Function } | { name?: string, dataPredicate: Function }): Function {
+export function JsonProperty(args?: JsonPropertyInput): Function {
     return (target: Object, key: string): void => {
 
         let map: { [id: string]: Metadata; } = {};
@@ -190,16 +196,18 @@ function isSerializable(type: any): boolean {
 /**
  * Function to transform the JsonProperty value into an object like {name: string, type: Function}
  */
-function getJsonPropertyValue(key: string, args: string | { name?: string, type: Function } | { name?: string, predicate: Function } | { name?: string, dataPredicate: Function }): Metadata {
-    if (!args) {
-        return {
-            name: key.toString(),
-            type: undefined
-        };
+function getJsonPropertyValue(key: string, jsonPropertyInput: JsonPropertyInput): Metadata {
+    const metadata: Metadata = new Metadata();
+    if (!jsonPropertyInput) {
+        metadata.name = key.toString();
+        return metadata;
     }
 
-    const name: string = typeof args === Type.String ? args : args['name'] ? args['name'] : key.toString();
-    return args['predicate'] ? { name, predicate: args['predicate'] } : args['dataPredicate'] ? { name, dataPredicate: args['dataPredicate'] } : { name, type: args['type'] };
+    metadata.name = typeof jsonPropertyInput === Type.String ? jsonPropertyInput : jsonPropertyInput['name'] ? jsonPropertyInput['name'] : key.toString();
+    metadata.type = jsonPropertyInput['type'];
+    metadata.predicate = jsonPropertyInput['predicate'];
+    metadata.dataPredicate = jsonPropertyInput['dataPredicate'];
+    return metadata;
 }
 
 /**
