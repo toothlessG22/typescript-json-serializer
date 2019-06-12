@@ -10,7 +10,7 @@ const designType: string = 'design:type';
 /**
  * Decorator JsonProperty
  */
-export function JsonProperty(args?: string | { name?: string, type: Function } | { name?: string, predicate: Function }): Function {
+export function JsonProperty(args?: string | { name?: string, type: Function } | { name?: string, predicate: Function } | { name?: string, dataPredicate: string }): Function {
     return (target: Object, key: string): void => {
 
         let map: { [id: string]: Metadata; } = {};
@@ -144,10 +144,11 @@ function convertDataToProperty(instance: Function, key: string, value: Metadata,
     const type: Metadata = Reflect.getMetadata(designType, instance, key);
     const isArray: boolean = type.name.toLowerCase() === Type.Array;
     const predicate: Function = value['predicate'];
+    const dataPredicate: Function = value['predicate'];
     let propertyType: any = value['type'] || type;
     const isSerializableProperty: boolean = isSerializable(propertyType);
 
-    if (!isSerializableProperty && !predicate) {
+    if (!isSerializableProperty && !predicate && !dataPredicate) {
         return castSimpleData(propertyType.name, data);
     }
 
@@ -157,6 +158,12 @@ function convertDataToProperty(instance: Function, key: string, value: Metadata,
             if (predicate) {
                 propertyType = predicate(d);
             }
+            if (dataPredicate) {
+                d = dataPredicate();
+                if (isSerializable(propertyType)) {
+                    return castSimpleData(propertyType.name, d);
+                }
+            }
             array.push(deserialize(d, propertyType));
         });
 
@@ -164,6 +171,12 @@ function convertDataToProperty(instance: Function, key: string, value: Metadata,
     }
 
     propertyType = predicate ? predicate(data) : propertyType;
+    if (dataPredicate) {
+        data = dataPredicate(data);
+        if (isSerializable(propertyType)) {
+            return castSimpleData(propertyType.name, data);
+        }
+    }
     return deserialize(data, propertyType);
 }
 
@@ -177,7 +190,7 @@ function isSerializable(type: any): boolean {
 /**
  * Function to transform the JsonProperty value into an object like {name: string, type: Function}
  */
-function getJsonPropertyValue(key: string, args: string | { name?: string, type: Function } | { name?: string, predicate: Function }): Metadata {
+function getJsonPropertyValue(key: string, args: string | { name?: string, type: Function } | { name?: string, predicate: Function } | { name?: string, dataPredicate: Function }): Metadata {
     if (!args) {
         return {
             name: key.toString(),
@@ -186,7 +199,7 @@ function getJsonPropertyValue(key: string, args: string | { name?: string, type:
     }
 
     const name: string = typeof args === Type.String ? args : args['name'] ? args['name'] : key.toString();
-    return args['predicate'] ? { name, predicate: args['predicate'] } : { name, type: args['type'] };
+    return args['predicate'] ? { name, predicate: args['predicate'] } : args['dataPredicate'] ? { name, predicate: args['dataPredicate'] } : { name, type: args['type'] };
 }
 
 /**
