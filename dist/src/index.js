@@ -139,8 +139,12 @@ function convertDataToProperty(instance, key, value, data) {
     var predicate = value['predicate'];
     var dataPredicate = value['dataPredicate'];
     var propertyType = value['type'] || type;
+    propertyType = predicate ? predicate(data) : propertyType;
     var isSerializableProperty = isSerializable(propertyType);
-    if (!isSerializableProperty && !predicate && !dataPredicate) {
+    if (dataPredicate) {
+        data = dataPredicate(data);
+    }
+    if (!isSerializableProperty) {
         return castSimpleData(propertyType.name, data);
     }
     if (isArray) {
@@ -149,22 +153,14 @@ function convertDataToProperty(instance, key, value, data) {
             if (predicate) {
                 propertyType = predicate(d);
             }
-            if (dataPredicate) {
-                d = dataPredicate(d);
-                if (isSerializable(propertyType)) {
-                    return castSimpleData(propertyType.name, d);
-                }
+            if (!isSerializable(propertyType)) {
+                array_2.push(castSimpleData(propertyType.name, data));
             }
-            array_2.push(deserialize(d, propertyType));
+            else {
+                array_2.push(deserialize(d, propertyType));
+            }
         });
         return array_2;
-    }
-    propertyType = predicate ? predicate(data) : propertyType;
-    if (dataPredicate) {
-        data = dataPredicate(data);
-        if (!isSerializable(propertyType)) {
-            return castSimpleData(propertyType.name, data);
-        }
     }
     return deserialize(data, propertyType);
 }

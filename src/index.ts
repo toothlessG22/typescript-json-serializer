@@ -152,9 +152,14 @@ function convertDataToProperty(instance: Function, key: string, value: Metadata,
     const predicate: Function = value['predicate'];
     const dataPredicate: Function = value['dataPredicate'];
     let propertyType: any = value['type'] || type;
+    propertyType = predicate ? predicate(data) : propertyType;
     const isSerializableProperty: boolean = isSerializable(propertyType);
 
-    if (!isSerializableProperty && !predicate && !dataPredicate) {
+    if (dataPredicate) {
+        data = dataPredicate(data);
+    }
+
+    if (!isSerializableProperty) {
         return castSimpleData(propertyType.name, data);
     }
 
@@ -164,24 +169,14 @@ function convertDataToProperty(instance: Function, key: string, value: Metadata,
             if (predicate) {
                 propertyType = predicate(d);
             }
-            if (dataPredicate) {
-                d = dataPredicate(d);
-                if (isSerializable(propertyType)) {
-                    return castSimpleData(propertyType.name, d);
-                }
+            if (!isSerializable(propertyType)) {
+                array.push(castSimpleData(propertyType.name, data));
+            } else {
+                array.push(deserialize(d, propertyType));
             }
-            array.push(deserialize(d, propertyType));
         });
 
         return array;
-    }
-
-    propertyType = predicate ? predicate(data) : propertyType;
-    if (dataPredicate) {
-        data = dataPredicate(data);
-        if (!isSerializable(propertyType)) {
-            return castSimpleData(propertyType.name, data);
-        }
     }
     return deserialize(data, propertyType);
 }
