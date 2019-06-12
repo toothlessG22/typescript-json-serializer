@@ -1,3 +1,3 @@
-type Metadata = { name: string, type: Function } | { name: string, predicate: Function };
+type Metadata = { name: string, type: Function } | { name: string, predicate: Function } | { name: string, dataPredicate: Function };
 
 export default Metadata;

@@ -132,7 +132,7 @@ function convertDataToProperty(instance, key, value, data) {
     var type = Reflect.getMetadata(designType, instance, key);
     var isArray = type.name.toLowerCase() === type_1.default.Array;
     var predicate = value['predicate'];
-    var dataPredicate = value['predicate'];
+    var dataPredicate = value['dataPredicate'];
     var propertyType = value['type'] || type;
     var isSerializableProperty = isSerializable(propertyType);
     if (!isSerializableProperty && !predicate && !dataPredicate) {
@@ -145,7 +145,7 @@ function convertDataToProperty(instance, key, value, data) {
                 propertyType = predicate(d);
             }
             if (dataPredicate) {
-                d = dataPredicate();
+                d = dataPredicate(d);
                 if (isSerializable(propertyType)) {
                     return castSimpleData(propertyType.name, d);
                 }
@@ -180,7 +180,7 @@ function getJsonPropertyValue(key, args) {
         };
     }
     var name = typeof args === type_1.default.String ? args : args['name'] ? args['name'] : key.toString();
-    return args['predicate'] ? { name: name, predicate: args['predicate'] } : args['dataPredicate'] ? { name: name, predicate: args['dataPredicate'] } : { name: name, type: args['type'] };
+    return args['predicate'] ? { name: name, predicate: args['predicate'] } : args['dataPredicate'] ? { name: name, dataPredicate: args['dataPredicate'] } : { name: name, type: args['type'] };
 }
 /**
  * Function to cast simple type data into the real class property type
