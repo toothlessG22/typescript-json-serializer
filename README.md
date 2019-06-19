@@ -20,24 +20,11 @@ For example:
 
 ```json
 {
-    "compileOnSave": false,
     "compilerOptions": {
-        "outDir": "./dist",
-        "sourceMap": false,
-        "declaration": true,
-        "moduleResolution": "node",
+        ...
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "target": "es5",
-        "typeRoots": [
-            "node_modules/@types"
-        ],
-        "lib": [
-            "es2015",
-            "dom"
-        ]
+        ...
     }
 }
 ```
@@ -100,7 +87,7 @@ deserialize(json: any, type: any)
 // zoo.ts
 
 // Import decorators from library
-import { Serializable, JsonProperty } from './../../src';
+import { Serializable, JsonProperty } from 'typescript-json-serializer';
 
 // Enums
 export enum Gender {
@@ -126,17 +113,13 @@ export class Employee {
     @JsonProperty()
     public id: number;
     @JsonProperty()
-    public name: string;
-    @JsonProperty()
-    public birthdate: Date;
-    @JsonProperty()
     public email: string;
 
-    // Enum value (number)
-    @JsonProperty()
-    public gender: Gender;
-
-    public constructor() { }
+    public constructor(
+        @JsonProperty() public name: string,
+        @JsonProperty() public gender: Gender,
+        @JsonProperty() public readonly birthDate: Date
+    ) { }
 
 }
 
@@ -151,7 +134,7 @@ export class Animal {
     @JsonProperty()
     public name: string;
     @JsonProperty()
-    public birthdate: Date;
+    public birthDate: Date;
     @JsonProperty()
     public numberOfPaws: number;
     @JsonProperty()
@@ -165,7 +148,9 @@ export class Animal {
     @JsonProperty('childrenIdentifiers')
     public childrenIds: Array<number>;
 
-    public constructor() { }
+    public constructor(name: string) {
+        this.name = name;
+    }
 
 }
 
@@ -177,13 +162,15 @@ export class Animal {
 @Serializable('Animal')
 export class Panther extends Animal {
 
-    @JsonProperty()
-    public color: string;
-    @JsonProperty()
-    public isSpeckled: boolean;
+    @JsonProperty() public color: string;
 
-    public constructor() {
-        super();
+    // JsonProperty directly inside the constructor
+    // for property parameters
+    public constructor(
+        @JsonProperty() public isSpeckled: boolean,
+        name: string
+    ) {
+        super(name);
     }
 
 }
@@ -197,8 +184,8 @@ export class Snake extends Animal {
     @JsonProperty()
     public isPoisonous: boolean;
 
-    public constructor() {
-        super();
+    public constructor(name: string) {
+        super(name);
     }
 
 }
@@ -267,7 +254,7 @@ export const data: any = {
     'boss': {
         'id': 1,
         'name': 'Bob Razowsky',
-        'birthdate': '1984-04-03T22:00:00.000Z',
+        'birthDate': '1984-04-03T22:00:00.000Z',
         'email': 'bob.razowsky@tgzoo.fr',
         'gender': 1
     },
@@ -275,28 +262,28 @@ export const data: any = {
         {
             'id': 1,
             'name': 'Bob Razowsky',
-            'birthdate': '1984-04-03T22:00:00.000Z',
+            'birthDate': '1984-04-03T22:00:00.000Z',
             'email': 'bob.razowsky@tgzoo.fr',
             'gender': 1
         },
         {
             'id': 2,
             'name': 'Mikasa Ackerman',
-            'birthdate': '1984-01-11T22:00:00.000Z',
+            'birthDate': '1984-01-11T22:00:00.000Z',
             'email': 'mikasa.ackerman@tgzoo.fr',
             'gender': 0
         },
         {
             'id': 3,
             'name': 'Red Redington',
-            'birthdate': '1970-12-04T22:00:00.000Z',
+            'birthDate': '1970-12-04T22:00:00.000Z',
             'email': 'red.redington@tgzoo.fr',
             'gender': 1
         },
         {
             'id': 4,
             'name': 'Fried Richter',
-            'birthdate': '1994-04-01T22:00:00.000Z',
+            'birthDate': '1994-04-01T22:00:00.000Z',
             'email': 'fried.richter@tgzoo.fr',
             'gender': 1
         }
@@ -305,7 +292,7 @@ export const data: any = {
         {
             'id': 1,
             'name': 'Bagheera',
-            'birthdate': '2010-01-11T22:00:00.000Z',
+            'birthDate': '2010-01-11T22:00:00.000Z',
             'numberOfPaws': 4,
             'gender': 1,
             'childrenIdentifiers': [
@@ -319,7 +306,7 @@ export const data: any = {
         {
             'id': 2,
             'name': 'Jolene',
-            'birthdate': '2017-03-10T22:00:00.000Z',
+            'birthDate': '2017-03-10T22:00:00.000Z',
             'numberOfPaws': 4,
             'gender': 0,
             'color': 'blond',
@@ -329,7 +316,7 @@ export const data: any = {
         {
             'id': 3,
             'name': 'Ka',
-            'birthdate': '2018-09-09T00:00:00.000Z',
+            'birthDate': '2018-09-09T00:00:00.000Z',
             'numberOfPaws': 0,
             'gender': 1,
             'isPoisonous': true,
@@ -338,7 +325,7 @@ export const data: any = {
         {
             'id': 4,
             'name': 'Schrodinger',
-            'birthdate': '2015-03-05T22:00:00.000Z',
+            'birthDate': '2015-03-05T22:00:00.000Z',
             'numberOfPaws': 4,
             'gender': 1,
             'color': 'brown',
@@ -349,7 +336,7 @@ export const data: any = {
     'mascot': {
         'id': 1,
         'name': 'Bagheera',
-        'birthdate': '2010-01-11T22:00:00.000Z',
+        'birthDate': '2010-01-11T22:00:00.000Z',
         'numberOfPaws': 4,
         'gender': 1,
         'childrenIdentifiers': [
