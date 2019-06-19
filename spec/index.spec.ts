@@ -72,8 +72,6 @@ describe('serialize', () => {
 
 describe('deserialize', () => {
     it('should return true', () => {
-        console.log(deserialize(data, Zoo));
-        console.log('Deserialized Data', deserializedData);
         expect(deserialize(data, Zoo)).to.deep.equal(deserializedData);
     });
 

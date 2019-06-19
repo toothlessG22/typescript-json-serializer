@@ -169,7 +169,6 @@ function convertDataToProperty(instance, key, value, data) {
     var predicate = value.predicate;
     var dataHandlers = value.dataDeserializationHandlers;
     var propertyType = value.type || type;
-    var isSerializableProperty = isSerializable(propertyType);
     if (dataHandlers) {
         for (var _i = 0, dataHandlers_2 = dataHandlers; _i < dataHandlers_2.length; _i++) {
             var dataHandler = dataHandlers_2[_i];
@@ -183,7 +182,7 @@ function convertDataToProperty(instance, key, value, data) {
                 propertyType = predicate(d);
             }
             if (!isSerializable(propertyType)) {
-                array_2.push(castSimpleData(propertyType.name, data));
+                array_2.push(castSimpleData(propertyType.name, d));
             }
             else {
                 array_2.push(deserialize(d, propertyType));
@@ -193,6 +192,7 @@ function convertDataToProperty(instance, key, value, data) {
     }
     // Apply predicate after we know that it is not an array.
     propertyType = predicate ? predicate(data) : propertyType;
+    var isSerializableProperty = isSerializable(propertyType);
     if (!isSerializableProperty) {
         return castSimpleData(propertyType.name, data);
     }

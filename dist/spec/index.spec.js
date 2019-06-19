@@ -68,8 +68,6 @@ describe('serialize', function () {
 });
 describe('deserialize', function () {
     it('should return true', function () {
-        console.log(index_1.deserialize(data_1.data, zoo_1.Zoo));
-        console.log('Deserialized Data', data_1.deserializedData);
         chai_1.expect(index_1.deserialize(data_1.data, zoo_1.Zoo)).to.deep.equal(data_1.deserializedData);
     });
     it('should return true even if there are fake data included', function () {

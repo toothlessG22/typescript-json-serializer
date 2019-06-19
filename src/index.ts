@@ -188,7 +188,6 @@ function convertDataToProperty(instance: Function, key: string, value: Metadata,
     const predicate: Function = value.predicate;
     const dataHandlers: Array<Function> = value.dataDeserializationHandlers;
     let propertyType: any = value.type || type;
-    const isSerializableProperty: boolean = isSerializable(propertyType);
 
     if (dataHandlers) {
         for (const dataHandler of dataHandlers) {
@@ -203,7 +202,7 @@ function convertDataToProperty(instance: Function, key: string, value: Metadata,
                 propertyType = predicate(d);
             }
             if (!isSerializable(propertyType)) {
-                array.push(castSimpleData(propertyType.name, data));
+                array.push(castSimpleData(propertyType.name, d));
             } else {
                 array.push(deserialize(d, propertyType));
             }
@@ -214,6 +213,7 @@ function convertDataToProperty(instance: Function, key: string, value: Metadata,
 
     // Apply predicate after we know that it is not an array.
     propertyType = predicate ? predicate(data) : propertyType;
+    const isSerializableProperty: boolean = isSerializable(propertyType);
 
     if (!isSerializableProperty) {
         return castSimpleData(propertyType.name, data);
