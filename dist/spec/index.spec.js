@@ -68,6 +68,8 @@ describe('serialize', function () {
 });
 describe('deserialize', function () {
     it('should return true', function () {
+        console.log(index_1.deserialize(data_1.data, zoo_1.Zoo));
+        console.log('Deserialized Data', data_1.deserializedData);
         chai_1.expect(index_1.deserialize(data_1.data, zoo_1.Zoo)).to.deep.equal(data_1.deserializedData);
     });
     it('should return true even if there are fake data included', function () {
@@ -137,15 +139,19 @@ describe('isSerializable', function () {
 describe('getJsonPropertyValue', function () {
     var getJsonPropertyValue = tjs.__get__('getJsonPropertyValue');
     it('should return name equals to key and type equals undefined', function () {
-        chai_1.expect(getJsonPropertyValue('hello', undefined)).to.deep.equal({ name: 'hello', type: undefined });
+        chai_1.expect(getJsonPropertyValue('hello', 'Hello', { name: 'hello', type: undefined }))
+            .include({ 'name': 'hello', 'type': undefined, 'typeName': 'Hello' });
     });
     it('should return name equals to args and type equals undefined', function () {
-        chai_1.expect(getJsonPropertyValue('hello', 'Hello')).to.deep.equal({ name: 'Hello', type: undefined });
+        chai_1.expect(getJsonPropertyValue('hello', 'Hello', {}))
+            .include({ 'name': 'hello', 'type': undefined, 'typeName': 'Hello' });
     });
     it('should return name equals to key and type equals args["type"]', function () {
-        chai_1.expect(getJsonPropertyValue('zoo', { type: zoo_1.Zoo })).to.deep.equal({ name: 'zoo', type: zoo_1.Zoo });
+        chai_1.expect(getJsonPropertyValue('zoo', 'Zoo', { type: zoo_1.Zoo }))
+            .include({ 'name': 'zoo', 'type': zoo_1.Zoo });
     });
     it('should return name equals to args["name"] and type equals args["type"]', function () {
-        chai_1.expect(getJsonPropertyValue('zoo', { name: 'myZoo', type: zoo_1.Zoo })).to.deep.equal({ name: 'myZoo', type: zoo_1.Zoo });
+        chai_1.expect(getJsonPropertyValue('zoo', 'Zoo', { name: 'myZoo', type: zoo_1.Zoo }))
+            .include({ 'name': 'myZoo', 'type': zoo_1.Zoo, 'typeName': 'Zoo' });
     });
 });

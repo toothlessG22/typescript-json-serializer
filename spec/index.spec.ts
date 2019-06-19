@@ -1,8 +1,9 @@
+import { Metadata } from './../src/metadata';
 import { expect } from 'chai';
 import 'reflect-metadata';
 import * as rewire from 'rewire';
 
-import { deserialize, serialize } from '../src/index';
+import { deserialize, serialize, JsonPropertyInput } from '../src/index';
 
 import { Dummy } from '../examples/models/dummy';
 import { Panther } from '../examples/models/panther';
@@ -71,6 +72,8 @@ describe('serialize', () => {
 
 describe('deserialize', () => {
     it('should return true', () => {
+        console.log(deserialize(data, Zoo));
+        console.log('Deserialized Data', deserializedData);
         expect(deserialize(data, Zoo)).to.deep.equal(deserializedData);
     });
 
@@ -157,20 +160,25 @@ describe('isSerializable', () => {
 });
 
 describe('getJsonPropertyValue', () => {
-    const getJsonPropertyValue: Function = tjs.__get__('getJsonPropertyValue');
+    const getJsonPropertyValue: (key: string, typeName: string, jsonPropertyInput?: JsonPropertyInput) => Metadata = tjs.__get__('getJsonPropertyValue');
+
     it('should return name equals to key and type equals undefined', () => {
-        expect(getJsonPropertyValue('hello', undefined)).to.deep.equal({ name: 'hello', type: undefined });
+        expect(getJsonPropertyValue('hello', 'Hello', { name: 'hello', type: undefined }))
+            .include({ 'name': 'hello', 'type': undefined, 'typeName': 'Hello' });
     });
 
     it('should return name equals to args and type equals undefined', () => {
-        expect(getJsonPropertyValue('hello', 'Hello')).to.deep.equal({ name: 'Hello', type: undefined });
+        expect(getJsonPropertyValue('hello', 'Hello', {}))
+            .include({ 'name': 'hello', 'type': undefined, 'typeName': 'Hello' });
     });
 
     it('should return name equals to key and type equals args["type"]', () => {
-        expect(getJsonPropertyValue('zoo', { type: Zoo })).to.deep.equal({ name: 'zoo', type: Zoo });
+        expect(getJsonPropertyValue('zoo', 'Zoo', { type: Zoo }))
+            .include({ 'name': 'zoo', 'type': Zoo });
     });
 
     it('should return name equals to args["name"] and type equals args["type"]', () => {
-        expect(getJsonPropertyValue('zoo', { name: 'myZoo', type: Zoo })).to.deep.equal({ name: 'myZoo', type: Zoo });
+        expect(getJsonPropertyValue('zoo', 'Zoo', { name: 'myZoo', type: Zoo }))
+            .include({ 'name': 'myZoo', 'type': Zoo, 'typeName': 'Zoo' });
     });
 });
