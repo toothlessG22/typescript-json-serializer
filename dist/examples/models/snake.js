@@ -26,8 +26,8 @@ var animal_1 = require("./animal");
 var src_1 = require("../../src");
 var Snake = /** @class */ (function (_super) {
     __extends(Snake, _super);
-    function Snake() {
-        return _super.call(this) || this;
+    function Snake(name) {
+        return _super.call(this, name) || this;
     }
     __decorate([
         src_1.JsonProperty(),
@@ -35,7 +35,7 @@ var Snake = /** @class */ (function (_super) {
     ], Snake.prototype, "isPoisonous", void 0);
     Snake = __decorate([
         src_1.Serializable('Animal'),
-        __metadata("design:paramtypes", [])
+        __metadata("design:paramtypes", [String])
     ], Snake);
     return Snake;
 }(animal_1.Animal));

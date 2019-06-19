@@ -8,11 +8,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var src_1 = require("./../../src");
 var gender_1 = require("./gender");
 var Employee = /** @class */ (function () {
-    function Employee() {
+    function Employee(name, gender, birthDate) {
+        this.name = name;
+        this.gender = gender;
+        this.birthDate = birthDate;
     }
     __decorate([
         src_1.JsonProperty(),
@@ -21,22 +27,13 @@ var Employee = /** @class */ (function () {
     __decorate([
         src_1.JsonProperty(),
         __metadata("design:type", String)
-    ], Employee.prototype, "name", void 0);
-    __decorate([
-        src_1.JsonProperty(),
-        __metadata("design:type", Date)
-    ], Employee.prototype, "birthdate", void 0);
-    __decorate([
-        src_1.JsonProperty(),
-        __metadata("design:type", String)
     ], Employee.prototype, "email", void 0);
-    __decorate([
-        src_1.JsonProperty(),
-        __metadata("design:type", Number)
-    ], Employee.prototype, "gender", void 0);
     Employee = __decorate([
         src_1.Serializable(),
-        __metadata("design:paramtypes", [])
+        __param(0, src_1.JsonProperty()),
+        __param(1, src_1.JsonProperty()),
+        __param(2, src_1.JsonProperty()),
+        __metadata("design:paramtypes", [String, Number, Date])
     ], Employee);
     return Employee;
 }());

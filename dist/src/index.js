@@ -18,21 +18,36 @@ var type_1 = require("./type");
 var apiMap = 'api:map:';
 var apiMapSerializable = apiMap + "serializable";
 var designType = 'design:type';
+var designParamtypes = 'design:paramtypes';
+/**
+ * Function to find the name of function parameters
+ */
+function getParamNames(ctor) {
+    var params = ctor.toString().match(/function\s.*?\(([^)]*)\)/)[1];
+    return params.replace(/\s/g, '').split(',');
+}
 /**
  * Decorator JsonProperty
  */
 function JsonProperty(args) {
-    return function (target, key) {
+    return function (target, key, index) {
+        if (key === undefined && target['prototype']) {
+            var type = Reflect.getMetadata(designParamtypes, target, key)[index];
+            var keys = getParamNames(target['prototype'].constructor);
+            key = keys[index];
+            target = target['prototype'];
+            Reflect.defineMetadata(designType, type, target, key);
+        }
         console.log("marking " + target.constructor.name + "[" + key + "] as serializable");
         var map = {};
         var targetName = target.constructor.name;
-        var ApiMapTargetName = "" + apiMap + targetName;
+        var apiMapTargetName = "" + apiMap + targetName;
         var typeName = Reflect.getMetadata(designType, target, key).name;
-        if (Reflect.hasMetadata(ApiMapTargetName, target)) {
-            map = Reflect.getMetadata(ApiMapTargetName, target);
+        if (Reflect.hasMetadata(apiMapTargetName, target)) {
+            map = Reflect.getMetadata(apiMapTargetName, target);
         }
         map[key] = getJsonPropertyValue(key, typeName, args);
-        Reflect.defineMetadata(ApiMapTargetName, map, target);
+        Reflect.defineMetadata(apiMapTargetName, map, target);
     };
 }
 exports.JsonProperty = JsonProperty;

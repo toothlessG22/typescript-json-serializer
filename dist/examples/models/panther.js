@@ -21,25 +21,28 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var src_1 = require("./../../src");
 var animal_1 = require("./animal");
 var Panther = /** @class */ (function (_super) {
     __extends(Panther, _super);
-    function Panther() {
-        return _super.call(this) || this;
+    function Panther(isSpeckled, name) {
+        var _this = _super.call(this, name) || this;
+        _this.isSpeckled = isSpeckled;
+        _this.name = name;
+        return _this;
     }
     __decorate([
         src_1.JsonProperty(),
         __metadata("design:type", String)
     ], Panther.prototype, "color", void 0);
-    __decorate([
-        src_1.JsonProperty(),
-        __metadata("design:type", Boolean)
-    ], Panther.prototype, "isSpeckled", void 0);
     Panther = __decorate([
         src_1.Serializable('Animal'),
-        __metadata("design:paramtypes", [])
+        __param(0, src_1.JsonProperty()),
+        __metadata("design:paramtypes", [Boolean, String])
     ], Panther);
     return Panther;
 }(animal_1.Animal));

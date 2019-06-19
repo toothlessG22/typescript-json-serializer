@@ -30,7 +30,8 @@
         "metadata"
     ],
     "dependencies": {
-        "reflect-metadata": "^0.1.13"
+        "reflect-metadata": "^0.1.13",
+        "yarn": "^1.16.0"
     },
     "devDependencies": {
         "@istanbuljs/nyc-config-typescript": "^0.1.3",

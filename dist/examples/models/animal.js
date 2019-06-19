@@ -13,7 +13,8 @@ var src_1 = require("./../../src");
 var gender_1 = require("./gender");
 var status_1 = require("./status");
 var Animal = /** @class */ (function () {
-    function Animal() {
+    function Animal(name) {
+        this.name = name;
     }
     __decorate([
         src_1.JsonProperty(),
@@ -26,7 +27,7 @@ var Animal = /** @class */ (function () {
     __decorate([
         src_1.JsonProperty(),
         __metadata("design:type", Date)
-    ], Animal.prototype, "birthdate", void 0);
+    ], Animal.prototype, "birthDate", void 0);
     __decorate([
         src_1.JsonProperty(),
         __metadata("design:type", Number)
@@ -45,7 +46,7 @@ var Animal = /** @class */ (function () {
     ], Animal.prototype, "status", void 0);
     Animal = __decorate([
         src_1.Serializable(),
-        __metadata("design:paramtypes", [])
+        __metadata("design:paramtypes", [String])
     ], Animal);
     return Animal;
 }());
