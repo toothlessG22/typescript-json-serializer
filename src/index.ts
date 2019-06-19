@@ -1,33 +1,38 @@
 import 'reflect-metadata';
 
 import Metadata from './metadata';
+export { Metadata };
 import Type from './type';
 
 const apiMap: string = 'api:map:';
 const apiMapSerializable: string = `${apiMap}serializable`;
 const designType: string = 'design:type';
 
-type JsonPropertyInput = string |
-{ name?: string, type: Function } |
-{ name?: string, predicate: Function } |
-{ name?: string, dataPredicate: Function } |
-{ name?: string, type: Function, dataPredicate: Function };
+export interface JsonPropertyInput {
+    name?: string;
+    predicate?: Function;
+    namePredicate?: (metadata: Metadata, keyOptions: Array<string>) => string;
+    dataDeserializationHandlers?: Array<Function>;
+    dataSerializationHandlers?: Array<Function>;
+    type?: Function;
+}
 
 /**
  * Decorator JsonProperty
  */
 export function JsonProperty(args?: JsonPropertyInput): Function {
     return (target: Object, key: string): void => {
-
+        console.log(`marking ${target.constructor.name}[${key}] as serializable`);
         let map: { [id: string]: Metadata; } = {};
         const targetName: string = target.constructor.name;
         const ApiMapTargetName: string = `${apiMap}${targetName}`;
+        const typeName: string = Reflect.getMetadata(designType, target, key).name;
 
         if (Reflect.hasMetadata(ApiMapTargetName, target)) {
             map = Reflect.getMetadata(ApiMapTargetName, target);
         }
 
-        map[key] = getJsonPropertyValue(key, args);
+        map[key] = getJsonPropertyValue(key, typeName, args);
         Reflect.defineMetadata(ApiMapTargetName, map, target);
     };
 }
@@ -37,6 +42,7 @@ export function JsonProperty(args?: JsonPropertyInput): Function {
  */
 export function Serializable(baseClassName?: string): Function {
     return (target: Object): void => {
+        console.log(`marking ${target.constructor.name} as serializable with baseclassname '${baseClassName}'`);
         Reflect.defineMetadata(apiMapSerializable, baseClassName, target);
     };
 }
@@ -65,8 +71,14 @@ export function deserialize(json: any, type: any): any {
 
     const keys: Array<string> = Object.keys(instanceMap);
     keys.forEach((key: string) => {
-        if (json[instanceMap[key].name] !== undefined) {
-            instance[key] = convertDataToProperty(instance, key, instanceMap[key], json[instanceMap[key].name]);
+        let name: string = instanceMap[key].name;
+
+        if (instanceMap[key].namePredicate) {
+            name = instanceMap[key].namePredicate(instanceMap[key], Object.keys(json));
+        }
+
+        if (json[name] !== undefined) {
+            instance[key] = convertDataToProperty(instance, key, instanceMap[key], json[name]);
         }
     });
 
@@ -115,12 +127,19 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
  */
 function convertPropertyToData(instance: Function, key: string, value: Metadata, removeUndefined: boolean): any {
 
-    const property: any = instance[key];
+    let property: any = instance[key];
     const type: Metadata = Reflect.getMetadata(designType, instance, key);
     const isArray: boolean = type.name.toLocaleLowerCase() === Type.Array;
-    const predicate: Function = value['predicate'];
-    const propertyType: any = value['type'] || type;
+    const predicate: Function = value.predicate;
+    const dataHandlers: Array<Function> = value.dataSerializationHandlers;
+    const propertyType: any = value.type || type;
     const isSerializableProperty: boolean = isSerializable(propertyType);
+
+    if (dataHandlers) {
+        for (const dataHandler of dataHandlers) {
+            property = dataHandler(property);
+        }
+    }
 
     if (isSerializableProperty || predicate) {
         if (isArray) {
@@ -149,18 +168,15 @@ function convertDataToProperty(instance: Function, key: string, value: Metadata,
 
     const type: Metadata = Reflect.getMetadata(designType, instance, key);
     const isArray: boolean = type.name.toLowerCase() === Type.Array;
-    const predicate: Function = value['predicate'];
-    const dataPredicate: Function = value['dataPredicate'];
-    let propertyType: any = value['type'] || type;
-    propertyType = predicate ? predicate(data) : propertyType;
+    const predicate: Function = value.predicate;
+    const dataHandlers: Array<Function> = value.dataDeserializationHandlers;
+    let propertyType: any = value.type || type;
     const isSerializableProperty: boolean = isSerializable(propertyType);
 
-    if (dataPredicate) {
-        data = dataPredicate(data);
-    }
-
-    if (!isSerializableProperty) {
-        return castSimpleData(propertyType.name, data);
+    if (dataHandlers) {
+        for (const dataHandler of dataHandlers) {
+            data = dataHandler(data);
+        }
     }
 
     if (isArray) {
@@ -178,6 +194,14 @@ function convertDataToProperty(instance: Function, key: string, value: Metadata,
 
         return array;
     }
+
+    // Apply predicate after we know that it is not an array.
+    propertyType = predicate ? predicate(data) : propertyType;
+
+    if (!isSerializableProperty) {
+        return castSimpleData(propertyType.name, data);
+    }
+
     return deserialize(data, propertyType);
 }
 
@@ -191,17 +215,20 @@ function isSerializable(type: any): boolean {
 /**
  * Function to transform the JsonProperty value into an object like {name: string, type: Function}
  */
-function getJsonPropertyValue(key: string, jsonPropertyInput: JsonPropertyInput): Metadata {
+function getJsonPropertyValue(key: string, typeName: string, jsonPropertyInput?: JsonPropertyInput): Metadata {
     const metadata: Metadata = new Metadata();
     if (!jsonPropertyInput) {
         metadata.name = key.toString();
         return metadata;
     }
 
-    metadata.name = typeof jsonPropertyInput === Type.String ? jsonPropertyInput : jsonPropertyInput['name'] ? jsonPropertyInput['name'] : key.toString();
-    metadata.type = jsonPropertyInput['type'];
-    metadata.predicate = jsonPropertyInput['predicate'];
-    metadata.dataPredicate = jsonPropertyInput['dataPredicate'];
+    metadata.name = jsonPropertyInput.name ? jsonPropertyInput.name : key.toString();
+    metadata.type = jsonPropertyInput.type;
+    metadata.predicate = jsonPropertyInput.predicate;
+    metadata.namePredicate = jsonPropertyInput.namePredicate;
+    metadata.dataDeserializationHandlers = jsonPropertyInput.dataDeserializationHandlers;
+    metadata.dataSerializationHandlers = jsonPropertyInput.dataSerializationHandlers;
+    metadata.typeName = typeName;
     return metadata;
 }
 

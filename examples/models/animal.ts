@@ -16,7 +16,7 @@ export class Animal {
     public numberOfPaws: number;
     @JsonProperty()
     public gender: Gender;
-    @JsonProperty('childrenIdentifiers')
+    @JsonProperty({ name: 'childrenIdentifiers' })
     public childrenIds: Array<number>;
     @JsonProperty()
     public status: Status;

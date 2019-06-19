@@ -36,7 +36,7 @@ var Animal = /** @class */ (function () {
         __metadata("design:type", Number)
     ], Animal.prototype, "gender", void 0);
     __decorate([
-        src_1.JsonProperty('childrenIdentifiers'),
+        src_1.JsonProperty({ name: 'childrenIdentifiers' }),
         __metadata("design:type", Array)
     ], Animal.prototype, "childrenIds", void 0);
     __decorate([

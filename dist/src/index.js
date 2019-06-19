@@ -13,6 +13,7 @@ var __assign = (this && this.__assign) || function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 var metadata_1 = require("./metadata");
+exports.Metadata = metadata_1.default;
 var type_1 = require("./type");
 var apiMap = 'api:map:';
 var apiMapSerializable = apiMap + "serializable";
@@ -22,13 +23,15 @@ var designType = 'design:type';
  */
 function JsonProperty(args) {
     return function (target, key) {
+        console.log("marking " + target.constructor.name + "[" + key + "] as serializable");
         var map = {};
         var targetName = target.constructor.name;
         var ApiMapTargetName = "" + apiMap + targetName;
+        var typeName = Reflect.getMetadata(designType, target, key).name;
         if (Reflect.hasMetadata(ApiMapTargetName, target)) {
             map = Reflect.getMetadata(ApiMapTargetName, target);
         }
-        map[key] = getJsonPropertyValue(key, args);
+        map[key] = getJsonPropertyValue(key, typeName, args);
         Reflect.defineMetadata(ApiMapTargetName, map, target);
     };
 }
@@ -38,6 +41,7 @@ exports.JsonProperty = JsonProperty;
  */
 function Serializable(baseClassName) {
     return function (target) {
+        console.log("marking " + target.constructor.name + " as serializable with baseclassname '" + baseClassName + "'");
         Reflect.defineMetadata(apiMapSerializable, baseClassName, target);
     };
 }
@@ -64,8 +68,12 @@ function deserialize(json, type) {
     }
     var keys = Object.keys(instanceMap);
     keys.forEach(function (key) {
-        if (json[instanceMap[key].name] !== undefined) {
-            instance[key] = convertDataToProperty(instance, key, instanceMap[key], json[instanceMap[key].name]);
+        var name = instanceMap[key].name;
+        if (instanceMap[key].namePredicate) {
+            name = instanceMap[key].namePredicate(instanceMap[key], Object.keys(json));
+        }
+        if (json[name] !== undefined) {
+            instance[key] = convertDataToProperty(instance, key, instanceMap[key], json[name]);
         }
     });
     return instance;
@@ -112,9 +120,16 @@ function convertPropertyToData(instance, key, value, removeUndefined) {
     var property = instance[key];
     var type = Reflect.getMetadata(designType, instance, key);
     var isArray = type.name.toLocaleLowerCase() === type_1.default.Array;
-    var predicate = value['predicate'];
-    var propertyType = value['type'] || type;
+    var predicate = value.predicate;
+    var dataHandlers = value.dataSerializationHandlers;
+    var propertyType = value.type || type;
     var isSerializableProperty = isSerializable(propertyType);
+    if (dataHandlers) {
+        for (var _i = 0, dataHandlers_1 = dataHandlers; _i < dataHandlers_1.length; _i++) {
+            var dataHandler = dataHandlers_1[_i];
+            property = dataHandler(property);
+        }
+    }
     if (isSerializableProperty || predicate) {
         if (isArray) {
             var array_1 = [];
@@ -136,16 +151,15 @@ function convertPropertyToData(instance, key, value, removeUndefined) {
 function convertDataToProperty(instance, key, value, data) {
     var type = Reflect.getMetadata(designType, instance, key);
     var isArray = type.name.toLowerCase() === type_1.default.Array;
-    var predicate = value['predicate'];
-    var dataPredicate = value['dataPredicate'];
-    var propertyType = value['type'] || type;
-    propertyType = predicate ? predicate(data) : propertyType;
+    var predicate = value.predicate;
+    var dataHandlers = value.dataDeserializationHandlers;
+    var propertyType = value.type || type;
     var isSerializableProperty = isSerializable(propertyType);
-    if (dataPredicate) {
-        data = dataPredicate(data);
-    }
-    if (!isSerializableProperty) {
-        return castSimpleData(propertyType.name, data);
+    if (dataHandlers) {
+        for (var _i = 0, dataHandlers_2 = dataHandlers; _i < dataHandlers_2.length; _i++) {
+            var dataHandler = dataHandlers_2[_i];
+            data = dataHandler(data);
+        }
     }
     if (isArray) {
         var array_2 = [];
@@ -162,6 +176,11 @@ function convertDataToProperty(instance, key, value, data) {
         });
         return array_2;
     }
+    // Apply predicate after we know that it is not an array.
+    propertyType = predicate ? predicate(data) : propertyType;
+    if (!isSerializableProperty) {
+        return castSimpleData(propertyType.name, data);
+    }
     return deserialize(data, propertyType);
 }
 /**
@@ -173,16 +192,19 @@ function isSerializable(type) {
 /**
  * Function to transform the JsonProperty value into an object like {name: string, type: Function}
  */
-function getJsonPropertyValue(key, jsonPropertyInput) {
+function getJsonPropertyValue(key, typeName, jsonPropertyInput) {
     var metadata = new metadata_1.default();
     if (!jsonPropertyInput) {
         metadata.name = key.toString();
         return metadata;
     }
-    metadata.name = typeof jsonPropertyInput === type_1.default.String ? jsonPropertyInput : jsonPropertyInput['name'] ? jsonPropertyInput['name'] : key.toString();
-    metadata.type = jsonPropertyInput['type'];
-    metadata.predicate = jsonPropertyInput['predicate'];
-    metadata.dataPredicate = jsonPropertyInput['dataPredicate'];
+    metadata.name = jsonPropertyInput.name ? jsonPropertyInput.name : key.toString();
+    metadata.type = jsonPropertyInput.type;
+    metadata.predicate = jsonPropertyInput.predicate;
+    metadata.namePredicate = jsonPropertyInput.namePredicate;
+    metadata.dataDeserializationHandlers = jsonPropertyInput.dataDeserializationHandlers;
+    metadata.dataSerializationHandlers = jsonPropertyInput.dataSerializationHandlers;
+    metadata.typeName = typeName;
     return metadata;
 }
 /**

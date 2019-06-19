@@ -1,8 +1,12 @@
+
 export class Metadata {
     public name: string;
-    public type: Function;
-    public predicate: Function;
-    public dataPredicate: Function;
+    public predicate?: Function;
+    public namePredicate?: (metadata: Metadata, keyOptions: Array<string>) => string;
+    public dataDeserializationHandlers?: Array<Function>;
+    public dataSerializationHandlers?: Array<Function>;
+    public type?: Function;
+    public typeName: string;
 
     public constructor() {
 
