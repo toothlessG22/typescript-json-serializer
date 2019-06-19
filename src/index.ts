@@ -7,6 +7,15 @@ import Type from './type';
 const apiMap: string = 'api:map:';
 const apiMapSerializable: string = `${apiMap}serializable`;
 const designType: string = 'design:type';
+const designParamtypes: string = 'design:paramtypes';
+
+/**
+ * Function to find the name of function parameters
+ */
+function getParamNames(ctor: object): Array<string> {
+    const params: string = ctor.toString().match(/function\s.*?\(([^)]*)\)/)[1];
+    return params.replace(/\s/g, '').split(',');
+}
 
 export interface JsonPropertyInput {
     name?: string;
@@ -21,19 +30,27 @@ export interface JsonPropertyInput {
  * Decorator JsonProperty
  */
 export function JsonProperty(args?: JsonPropertyInput): Function {
-    return (target: Object, key: string): void => {
+    return (target: Object | Function, key: string, index: number): void => {
+        if (key === undefined && target['prototype']) {
+            const type: Function = Reflect.getMetadata(designParamtypes, target, key)[index];
+            const keys: Array<string> = getParamNames(target['prototype'].constructor);
+            key = keys[index];
+            target = target['prototype'];
+            Reflect.defineMetadata(designType, type, target, key);
+        }
+
         console.log(`marking ${target.constructor.name}[${key}] as serializable`);
         let map: { [id: string]: Metadata; } = {};
         const targetName: string = target.constructor.name;
-        const ApiMapTargetName: string = `${apiMap}${targetName}`;
+        const apiMapTargetName: string = `${apiMap}${targetName}`;
         const typeName: string = Reflect.getMetadata(designType, target, key).name;
 
-        if (Reflect.hasMetadata(ApiMapTargetName, target)) {
-            map = Reflect.getMetadata(ApiMapTargetName, target);
+        if (Reflect.hasMetadata(apiMapTargetName, target)) {
+            map = Reflect.getMetadata(apiMapTargetName, target);
         }
 
         map[key] = getJsonPropertyValue(key, typeName, args);
-        Reflect.defineMetadata(ApiMapTargetName, map, target);
+        Reflect.defineMetadata(apiMapTargetName, map, target);
     };
 }
 
