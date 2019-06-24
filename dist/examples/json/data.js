@@ -6,6 +6,7 @@ var panther_1 = require("../models/panther");
 var gender_1 = require("../models/gender");
 var status_1 = require("../models/status");
 var snake_1 = require("../models/snake");
+var lion_1 = require("../models/lion");
 exports.data = {
     'id': 15,
     'name': 'The Greatest Zoo',
@@ -95,6 +96,15 @@ exports.data = {
             'isSpeckled': false,
             'status': 'Dead and alive',
             '5StarRating': 20
+        },
+        {
+            'id': 5,
+            'name': 'Larry',
+            'birthDate': '2015-03-06T23:00:00.000Z',
+            'numberOfPaws': 4,
+            'gender': 1,
+            'status': 'Dead and alive',
+            'rating': 25
         }
     ],
     'mascot': {
@@ -158,8 +168,15 @@ schrodinger.id = exports.data.Animals[3].id;
 schrodinger.numberOfPaws = exports.data.Animals[3].numberOfPaws;
 schrodinger.status = status_1.Status.DeadAndAlive;
 schrodinger.rating = 40;
+var larry = new lion_1.Lion(exports.data.Animals[4].name);
+larry.birthDate = new Date(exports.data.Animals[4].birthDate);
+larry.gender = gender_1.Gender.Male;
+larry.id = exports.data.Animals[4].id;
+larry.numberOfPaws = exports.data.Animals[4].numberOfPaws;
+larry.status = status_1.Status.DeadAndAlive;
+larry.rating = 50;
 var zoo = new zoo_1.Zoo();
-zoo.animals = [bagheera, jolene, ka, schrodinger];
+zoo.animals = [bagheera, jolene, ka, schrodinger, larry];
 zoo.boss = boss;
 zoo.city = exports.data.city;
 zoo.country = exports.data.country;

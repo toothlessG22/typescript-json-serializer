@@ -9,12 +9,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var lion_1 = require("./lion");
 var src_1 = require("./../../src");
 var employee_1 = require("./employee");
 var panther_1 = require("./panther");
 var snake_1 = require("./snake");
 var predicate = function (animal) {
-    return animal['isPoisonous'] !== undefined ? snake_1.Snake : panther_1.Panther;
+    return animal['isPoisonous'] !== undefined ? snake_1.Snake :
+        (animal['isSpeckled'] !== undefined ? panther_1.Panther : lion_1.Lion);
 };
 var Zoo = /** @class */ (function () {
     function Zoo() {

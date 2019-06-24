@@ -1,3 +1,4 @@
+import { Lion } from './lion';
 import { Serializable, JsonProperty } from './../../src';
 
 import { Employee } from './employee';
@@ -6,7 +7,8 @@ import { Snake } from './snake';
 import { Animal } from './animal';
 
 const predicate: Function = (animal: any): Function => {
-    return animal['isPoisonous'] !== undefined ? Snake : animal['isSpeckled'] !== undefined;: Panther;
+    return animal['isPoisonous'] !== undefined ? Snake :
+        (animal['isSpeckled'] !== undefined ? Panther : Lion);
 };
 
 @Serializable()

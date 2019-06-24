@@ -5,6 +5,7 @@ import { Panther } from '../models/panther';
 import { Gender } from '../models/gender';
 import { Status } from '../models/status';
 import { Snake } from '../models/snake';
+import { Lion } from '../models/lion';
 
 export const data: any = {
     'id': 15,
@@ -95,6 +96,15 @@ export const data: any = {
             'isSpeckled': false,
             'status': 'Dead and alive',
             '5StarRating': 20
+        },
+        {
+            'id': 5,
+            'name': 'Larry',
+            'birthDate': '2015-03-06T23:00:00.000Z',
+            'numberOfPaws': 4,
+            'gender': 1,
+            'status': 'Dead and alive',
+            'rating': 25
         }
     ],
     'mascot': {
@@ -167,8 +177,16 @@ schrodinger.numberOfPaws = data.Animals[3].numberOfPaws;
 schrodinger.status = Status.DeadAndAlive;
 schrodinger.rating = 40;
 
+const larry: Lion = new Lion(data.Animals[4].name);
+larry.birthDate = new Date(data.Animals[4].birthDate);
+larry.gender = Gender.Male;
+larry.id = data.Animals[4].id;
+larry.numberOfPaws = data.Animals[4].numberOfPaws;
+larry.status = Status.DeadAndAlive;
+larry.rating = 50;
+
 const zoo: Zoo = new Zoo();
-zoo.animals = [bagheera, jolene, ka, schrodinger];
+zoo.animals = [bagheera, jolene, ka, schrodinger, larry];
 zoo.boss = boss;
 zoo.city = data.city;
 zoo.country = data.country;
