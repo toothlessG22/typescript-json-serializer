@@ -15,6 +15,7 @@ require("reflect-metadata");
 var metadata_1 = require("./metadata");
 exports.Metadata = metadata_1.default;
 var type_1 = require("./type");
+var init_logger_1 = require("./init-logger");
 var apiMap = 'api:map:';
 var apiMapSerializable = apiMap + "serializable";
 var designType = 'design:type';
@@ -84,11 +85,17 @@ function deserialize(json, type) {
     var keys = Object.keys(instanceMap);
     keys.forEach(function (key) {
         var name = instanceMap[key].name;
-        if (instanceMap[key].namePredicate) {
-            name = instanceMap[key].namePredicate(instanceMap[key], Object.keys(json));
+        if (instanceMap[key].nameDeserializationHandlers) {
+            for (var _i = 0, _a = instanceMap[key].nameDeserializationHandlers; _i < _a.length; _i++) {
+                var nameDeserializationHandler = _a[_i];
+                name = nameDeserializationHandler(instance, instanceMap[key], Object.keys(json));
+            }
         }
         if (json[name] !== undefined) {
             instance[key] = convertDataToProperty(instance, key, instanceMap[key], json[name]);
+        }
+        else {
+            init_logger_1.logger.warn("Could not find key " + key + " in", json);
         }
     });
     return instance;
@@ -122,7 +129,14 @@ function serialize(instance, removeUndefined) {
         }
         var data = convertPropertyToData(instance, key, instanceMap[key], removeUndefined);
         if (!removeUndefined || removeUndefined && data !== undefined) {
-            json[instanceMap[key].name] = data;
+            var name_1 = instanceMap[key].name;
+            if (instanceMap[key].nameSerializationHandlers) {
+                for (var _i = 0, _a = instanceMap[key].nameSerializationHandlers; _i < _a.length; _i++) {
+                    var nameSerializationHandler = _a[_i];
+                    name_1 = nameSerializationHandler(instance, instanceMap[key]);
+                }
+            }
+            json[name_1] = data;
         }
     });
     return json;
@@ -216,7 +230,8 @@ function getJsonPropertyValue(key, typeName, jsonPropertyInput) {
     metadata.name = jsonPropertyInput.name ? jsonPropertyInput.name : key.toString();
     metadata.type = jsonPropertyInput.type;
     metadata.predicate = jsonPropertyInput.predicate;
-    metadata.namePredicate = jsonPropertyInput.namePredicate;
+    metadata.nameDeserializationHandlers = jsonPropertyInput.nameDeserializationHandlers;
+    metadata.nameSerializationHandlers = jsonPropertyInput.nameSerializationHandlers;
     metadata.dataDeserializationHandlers = jsonPropertyInput.dataDeserializationHandlers;
     metadata.dataSerializationHandlers = jsonPropertyInput.dataSerializationHandlers;
     metadata.typeName = typeName;

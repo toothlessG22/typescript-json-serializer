@@ -6,7 +6,7 @@ import { Snake } from './snake';
 import { Animal } from './animal';
 
 const predicate: Function = (animal: any): Function => {
-    return animal['isPoisonous'] !== undefined ? Snake : Panther;
+    return animal['isPoisonous'] !== undefined ? Snake : animal['isSpeckled'] !== undefined;: Panther;
 };
 
 @Serializable()

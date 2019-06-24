@@ -61,7 +61,8 @@ export const data: any = {
             ],
             'color': 'black',
             'isSpeckled': false,
-            'status': 'Sick'
+            'status': 'Sick',
+            '5StarRating': 6
         },
         {
             'id': 2,
@@ -71,7 +72,8 @@ export const data: any = {
             'gender': 0,
             'color': 'blond',
             'isSpeckled': true,
-            'status': 'Alive'
+            'status': 'Alive',
+            '5StarRating': 5.2
         },
         {
             'id': 3,
@@ -80,7 +82,8 @@ export const data: any = {
             'numberOfPaws': 0,
             'gender': 1,
             'isPoisonous': true,
-            'status': 'Alive'
+            'status': 'Alive',
+            'rating': 11
         },
         {
             'id': 4,
@@ -90,7 +93,8 @@ export const data: any = {
             'gender': 1,
             'color': 'brown',
             'isSpeckled': false,
-            'status': 'Dead and alive'
+            'status': 'Dead and alive',
+            '5StarRating': 20
         }
     ],
     'mascot': {
@@ -105,7 +109,8 @@ export const data: any = {
         ],
         'color': 'black',
         'isSpeckled': false,
-        'status': 'Sick'
+        'status': 'Sick',
+        '5StarRating': 6
     }
 };
 
@@ -133,6 +138,7 @@ bagheera.gender = Gender.Male;
 bagheera.id = data.Animals[0].id;
 bagheera.numberOfPaws = data.Animals[0].numberOfPaws;
 bagheera.status = Status.Sick;
+bagheera.rating = 12;
 
 const jolene: Panther = new Panther(data.Animals[1].isSpeckled, data.Animals[1].name);
 jolene.color = data.Animals[1].color;
@@ -141,6 +147,7 @@ jolene.gender = Gender.Female;
 jolene.id = data.Animals[1].id;
 jolene.numberOfPaws = data.Animals[1].numberOfPaws;
 jolene.status = Status.Alive;
+jolene.rating = 10.4;
 
 const ka: Snake = new Snake(data.Animals[2].name);
 ka.birthDate = new Date(data.Animals[2].birthDate);
@@ -149,6 +156,7 @@ ka.id = data.Animals[2].id;
 ka.isPoisonous = data.Animals[2].isPoisonous;
 ka.numberOfPaws = data.Animals[2].numberOfPaws;
 ka.status = Status.Alive;
+ka.rating = 22;
 
 const schrodinger: Panther = new Panther(data.Animals[3].isSpeckled, data.Animals[3].name);
 schrodinger.color = data.Animals[3].color;
@@ -157,6 +165,7 @@ schrodinger.gender = Gender.Male;
 schrodinger.id = data.Animals[3].id;
 schrodinger.numberOfPaws = data.Animals[3].numberOfPaws;
 schrodinger.status = Status.DeadAndAlive;
+schrodinger.rating = 40;
 
 const zoo: Zoo = new Zoo();
 zoo.animals = [bagheera, jolene, ka, schrodinger];

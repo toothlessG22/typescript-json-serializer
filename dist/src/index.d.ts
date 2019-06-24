@@ -4,7 +4,8 @@ export { Metadata };
 export interface JsonPropertyInput {
     name?: string;
     predicate?: Function;
-    namePredicate?: (metadata: Metadata, keyOptions: Array<string>) => string;
+    nameSerializationHandlers?: Array<(parent: any, metadata: Metadata) => string>;
+    nameDeserializationHandlers?: Array<(parent: any, metadata: Metadata, keyOptions: Array<string>) => string>;
     dataDeserializationHandlers?: Array<Function>;
     dataSerializationHandlers?: Array<Function>;
     type?: Function;

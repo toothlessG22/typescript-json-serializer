@@ -1,8 +1,10 @@
+
 import 'reflect-metadata';
 
 import Metadata from './metadata';
 export { Metadata };
 import Type from './type';
+import { logger } from './init-logger';
 
 const apiMap: string = 'api:map:';
 const apiMapSerializable: string = `${apiMap}serializable`;
@@ -20,7 +22,8 @@ function getParamNames(ctor: object): Array<string> {
 export interface JsonPropertyInput {
     name?: string;
     predicate?: Function;
-    namePredicate?: (metadata: Metadata, keyOptions: Array<string>) => string;
+    nameSerializationHandlers?: Array<(parent: any, metadata: Metadata) => string>;
+    nameDeserializationHandlers?: Array<(parent: any, metadata: Metadata, keyOptions: Array<string>) => string>;
     dataDeserializationHandlers?: Array<Function>;
     dataSerializationHandlers?: Array<Function>;
     type?: Function;
@@ -90,12 +93,16 @@ export function deserialize(json: any, type: any): any {
     keys.forEach((key: string) => {
         let name: string = instanceMap[key].name;
 
-        if (instanceMap[key].namePredicate) {
-            name = instanceMap[key].namePredicate(instanceMap[key], Object.keys(json));
+        if (instanceMap[key].nameDeserializationHandlers) {
+            for (const nameDeserializationHandler of instanceMap[key].nameDeserializationHandlers) {
+                name = nameDeserializationHandler(instance, instanceMap[key], Object.keys(json));
+            }
         }
 
         if (json[name] !== undefined) {
             instance[key] = convertDataToProperty(instance, key, instanceMap[key], json[name]);
+        } else {
+            logger.warn(`Could not find key ${key} in`, json);
         }
     });
 
@@ -132,7 +139,13 @@ export function serialize(instance: any, removeUndefined: boolean = true): any {
         }
         const data: any = convertPropertyToData(instance, key, instanceMap[key], removeUndefined);
         if (!removeUndefined || removeUndefined && data !== undefined) {
-            json[instanceMap[key].name] = data;
+            let name: any = instanceMap[key].name;
+            if (instanceMap[key].nameSerializationHandlers) {
+                for (const nameSerializationHandler of instanceMap[key].nameSerializationHandlers) {
+                    name = nameSerializationHandler(instance, instanceMap[key]);
+                }
+            }
+            json[name] = data;
         }
     });
 
@@ -242,7 +255,8 @@ function getJsonPropertyValue(key: string, typeName: string, jsonPropertyInput?:
     metadata.name = jsonPropertyInput.name ? jsonPropertyInput.name : key.toString();
     metadata.type = jsonPropertyInput.type;
     metadata.predicate = jsonPropertyInput.predicate;
-    metadata.namePredicate = jsonPropertyInput.namePredicate;
+    metadata.nameDeserializationHandlers = jsonPropertyInput.nameDeserializationHandlers;
+    metadata.nameSerializationHandlers = jsonPropertyInput.nameSerializationHandlers;
     metadata.dataDeserializationHandlers = jsonPropertyInput.dataDeserializationHandlers;
     metadata.dataSerializationHandlers = jsonPropertyInput.dataSerializationHandlers;
     metadata.typeName = typeName;

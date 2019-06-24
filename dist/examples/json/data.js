@@ -61,7 +61,8 @@ exports.data = {
             ],
             'color': 'black',
             'isSpeckled': false,
-            'status': 'Sick'
+            'status': 'Sick',
+            '5StarRating': 6
         },
         {
             'id': 2,
@@ -71,7 +72,8 @@ exports.data = {
             'gender': 0,
             'color': 'blond',
             'isSpeckled': true,
-            'status': 'Alive'
+            'status': 'Alive',
+            '5StarRating': 5.2
         },
         {
             'id': 3,
@@ -80,7 +82,8 @@ exports.data = {
             'numberOfPaws': 0,
             'gender': 1,
             'isPoisonous': true,
-            'status': 'Alive'
+            'status': 'Alive',
+            'rating': 11
         },
         {
             'id': 4,
@@ -90,7 +93,8 @@ exports.data = {
             'gender': 1,
             'color': 'brown',
             'isSpeckled': false,
-            'status': 'Dead and alive'
+            'status': 'Dead and alive',
+            '5StarRating': 20
         }
     ],
     'mascot': {
@@ -105,7 +109,8 @@ exports.data = {
         ],
         'color': 'black',
         'isSpeckled': false,
-        'status': 'Sick'
+        'status': 'Sick',
+        '5StarRating': 6
     }
 };
 var boss = new employee_1.Employee(exports.data.boss.name, gender_1.Gender.Male, new Date(exports.data.boss.birthDate));
@@ -128,6 +133,7 @@ bagheera.gender = gender_1.Gender.Male;
 bagheera.id = exports.data.Animals[0].id;
 bagheera.numberOfPaws = exports.data.Animals[0].numberOfPaws;
 bagheera.status = status_1.Status.Sick;
+bagheera.rating = 12;
 var jolene = new panther_1.Panther(exports.data.Animals[1].isSpeckled, exports.data.Animals[1].name);
 jolene.color = exports.data.Animals[1].color;
 jolene.birthDate = new Date(exports.data.Animals[1].birthDate);
@@ -135,6 +141,7 @@ jolene.gender = gender_1.Gender.Female;
 jolene.id = exports.data.Animals[1].id;
 jolene.numberOfPaws = exports.data.Animals[1].numberOfPaws;
 jolene.status = status_1.Status.Alive;
+jolene.rating = 10.4;
 var ka = new snake_1.Snake(exports.data.Animals[2].name);
 ka.birthDate = new Date(exports.data.Animals[2].birthDate);
 ka.gender = gender_1.Gender.Male;
@@ -142,6 +149,7 @@ ka.id = exports.data.Animals[2].id;
 ka.isPoisonous = exports.data.Animals[2].isPoisonous;
 ka.numberOfPaws = exports.data.Animals[2].numberOfPaws;
 ka.status = status_1.Status.Alive;
+ka.rating = 22;
 var schrodinger = new panther_1.Panther(exports.data.Animals[3].isSpeckled, exports.data.Animals[3].name);
 schrodinger.color = exports.data.Animals[3].color;
 schrodinger.birthDate = new Date(exports.data.Animals[3].birthDate);
@@ -149,6 +157,7 @@ schrodinger.gender = gender_1.Gender.Male;
 schrodinger.id = exports.data.Animals[3].id;
 schrodinger.numberOfPaws = exports.data.Animals[3].numberOfPaws;
 schrodinger.status = status_1.Status.DeadAndAlive;
+schrodinger.rating = 40;
 var zoo = new zoo_1.Zoo();
 zoo.animals = [bagheera, jolene, ka, schrodinger];
 zoo.boss = boss;

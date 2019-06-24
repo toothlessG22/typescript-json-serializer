@@ -9,9 +9,24 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var panther_1 = require("./panther");
 var src_1 = require("./../../src");
 var gender_1 = require("./gender");
 var status_1 = require("./status");
+var nameDeserializationHandler = function (parent, metadata, keyOptions) {
+    if (parent instanceof panther_1.Panther) {
+        if (keyOptions.includes('5StarRating')) {
+            return '5StarRating';
+        }
+    }
+    return metadata.name;
+};
+var nameSerializationHandler = function (parent, metadata) {
+    if (parent instanceof panther_1.Panther) {
+        return '5StarRating';
+    }
+    return metadata.name;
+};
 var Animal = /** @class */ (function () {
     function Animal(name) {
         this.name = name;
@@ -44,6 +59,16 @@ var Animal = /** @class */ (function () {
         src_1.JsonProperty(),
         __metadata("design:type", String)
     ], Animal.prototype, "status", void 0);
+    __decorate([
+        src_1.JsonProperty({
+            name: 'rating',
+            dataDeserializationHandlers: [function (data) { return data * 2; }],
+            dataSerializationHandlers: [function (data) { return data / 2; }],
+            nameDeserializationHandlers: [nameDeserializationHandler],
+            nameSerializationHandlers: [nameSerializationHandler]
+        }),
+        __metadata("design:type", Number)
+    ], Animal.prototype, "rating", void 0);
     Animal = __decorate([
         src_1.Serializable(),
         __metadata("design:paramtypes", [String])
