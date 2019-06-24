@@ -40,8 +40,14 @@ export class Animal {
     public status: Status;
     @JsonProperty({
         name: 'rating',
-        dataDeserializationHandlers: [(data: any): any => data * 2],
-        dataSerializationHandlers: [(data: any): any => data / 2],
+        dataDeserializationHandlers: [
+            (data: any): any => data * 2,
+            (data: any): any => data + 1
+        ],
+        dataSerializationHandlers: [
+            (data: any): any => data - 1,
+            (data: any): any => data / 2
+        ],
         nameDeserializationHandlers: [nameDeserializationHandler],
         nameSerializationHandlers: [nameSerializationHandler]
     })

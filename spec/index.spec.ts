@@ -1,3 +1,5 @@
+import { deserializedPartyData } from './../examples/json/data';
+import { Party } from './../examples/models/party';
 import { Metadata } from './../src/metadata';
 import { expect } from 'chai';
 import 'reflect-metadata';
@@ -9,7 +11,7 @@ import { Dummy } from '../examples/models/dummy';
 import { Panther } from '../examples/models/panther';
 import { Zoo } from '../examples/models/zoo';
 
-import { data, deserializedData } from '../examples/json/data';
+import { data, deserializedData, partyData } from '../examples/json/data';
 
 const tjs: any = rewire('../src/index');
 
@@ -38,6 +40,7 @@ describe('Serializable', () => {
 describe('serialize', () => {
     it('should return true', () => {
         expect(serialize(deserializedData)).to.deep.equal(data);
+        expect(serialize(deserializedPartyData)).to.deep.equal(partyData);
     });
 
     it('should return 1 childrenIdentifiers', () => {
@@ -73,6 +76,7 @@ describe('serialize', () => {
 describe('deserialize', () => {
     it('should return true', () => {
         expect(deserialize(data, Zoo)).to.deep.equal(deserializedData);
+        expect(deserialize(partyData, Party)).to.deep.equal(deserializedPartyData);
     });
 
     it('should return true even if there are fake data included', () => {
@@ -80,6 +84,11 @@ describe('deserialize', () => {
         alteredData['fake'] = 'fake';
         alteredData['Animals'][0]['fake'] = 'fake';
         expect(deserialize(alteredData, Zoo)).to.deep.equal(deserializedData);
+
+        const alteredPartyData: any = { ...partyData };
+        alteredData['fake'] = 'fake';
+        alteredData['Animals'][0]['fake'] = 'fake';
+        expect(deserialize(alteredPartyData, Party)).to.deep.equal(deserializedPartyData);
     });
 
     it('should return an empty zoo (except for the isOpen property)', () => {

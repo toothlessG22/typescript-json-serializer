@@ -1,3 +1,4 @@
+import { Party } from './../models/party';
 import { Zoo } from '../models/zoo';
 import { Employee } from '../models/employee';
 import { Panther } from '../models/panther';
@@ -124,6 +125,78 @@ export const data: any = {
     }
 };
 
+// Keep this the same anaimals as above for now, look into a better solution later
+export const partyData: any = {
+    'animals': [
+        {
+            'inviteeData': {
+                'id': 1,
+                'name': 'Bagheera',
+                'birthDate': '2010-01-11T22:00:00.000Z',
+                'numberOfPaws': 4,
+                'gender': 1,
+                'childrenIdentifiers': [
+                    2,
+                    3
+                ],
+                'color': 'black',
+                'isSpeckled': false,
+                'status': 'Sick',
+                '5StarRating': 6
+            }
+        },
+        {
+            'inviteeData': {
+                'id': 2,
+                'name': 'Jolene',
+                'birthDate': '2017-03-10T22:00:00.000Z',
+                'numberOfPaws': 4,
+                'gender': 0,
+                'color': 'blond',
+                'isSpeckled': true,
+                'status': 'Alive',
+                '5StarRating': 5.2
+            }
+        },
+        {
+            'inviteeData': {
+                'id': 3,
+                'name': 'Ka',
+                'birthDate': '2018-09-09T00:00:00.000Z',
+                'numberOfPaws': 0,
+                'gender': 1,
+                'isPoisonous': true,
+                'status': 'Alive',
+                'rating': 11
+            }
+        },
+        {
+            'inviteeData': {
+                'id': 4,
+                'name': 'Schrodinger',
+                'birthDate': '2015-03-05T22:00:00.000Z',
+                'numberOfPaws': 4,
+                'gender': 1,
+                'color': 'brown',
+                'isSpeckled': false,
+                'status': 'Dead and alive',
+                '5StarRating': 20
+            }
+        },
+        {
+            'inviteeData': {
+                'id': 5,
+                'name': 'Larry',
+                'birthDate': '2015-03-06T23:00:00.000Z',
+                'numberOfPaws': 4,
+                'gender': 1,
+                'status': 'Dead and alive',
+                'rating': 25
+            }
+        }
+    ]
+};
+
 const boss: Employee = new Employee(data.boss.name, Gender.Male, new Date(data.boss.birthDate));
 boss.email = data.boss.email;
 boss.id = data.boss.id;
@@ -148,7 +221,7 @@ bagheera.gender = Gender.Male;
 bagheera.id = data.Animals[0].id;
 bagheera.numberOfPaws = data.Animals[0].numberOfPaws;
 bagheera.status = Status.Sick;
-bagheera.rating = 12;
+bagheera.rating = 13;
 
 const jolene: Panther = new Panther(data.Animals[1].isSpeckled, data.Animals[1].name);
 jolene.color = data.Animals[1].color;
@@ -157,7 +230,7 @@ jolene.gender = Gender.Female;
 jolene.id = data.Animals[1].id;
 jolene.numberOfPaws = data.Animals[1].numberOfPaws;
 jolene.status = Status.Alive;
-jolene.rating = 10.4;
+jolene.rating = 11.4;
 
 const ka: Snake = new Snake(data.Animals[2].name);
 ka.birthDate = new Date(data.Animals[2].birthDate);
@@ -166,7 +239,7 @@ ka.id = data.Animals[2].id;
 ka.isPoisonous = data.Animals[2].isPoisonous;
 ka.numberOfPaws = data.Animals[2].numberOfPaws;
 ka.status = Status.Alive;
-ka.rating = 22;
+ka.rating = 23;
 
 const schrodinger: Panther = new Panther(data.Animals[3].isSpeckled, data.Animals[3].name);
 schrodinger.color = data.Animals[3].color;
@@ -175,7 +248,7 @@ schrodinger.gender = Gender.Male;
 schrodinger.id = data.Animals[3].id;
 schrodinger.numberOfPaws = data.Animals[3].numberOfPaws;
 schrodinger.status = Status.DeadAndAlive;
-schrodinger.rating = 40;
+schrodinger.rating = 41;
 
 const larry: Lion = new Lion(data.Animals[4].name);
 larry.birthDate = new Date(data.Animals[4].birthDate);
@@ -183,7 +256,7 @@ larry.gender = Gender.Male;
 larry.id = data.Animals[4].id;
 larry.numberOfPaws = data.Animals[4].numberOfPaws;
 larry.status = Status.DeadAndAlive;
-larry.rating = 50;
+larry.rating = 51;
 
 const zoo: Zoo = new Zoo();
 zoo.animals = [bagheera, jolene, ka, schrodinger, larry];
@@ -196,3 +269,7 @@ zoo.mascot = bagheera;
 zoo.name = data.name;
 
 export const deserializedData: Zoo = zoo;
+
+const party: Party = new Party();
+party.animals = [bagheera, jolene, ka, schrodinger, larry];
+export const deserializedPartyData: Party = party;

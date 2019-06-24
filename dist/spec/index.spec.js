@@ -11,6 +11,8 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var data_1 = require("./../examples/json/data");
+var party_1 = require("./../examples/models/party");
 var chai_1 = require("chai");
 require("reflect-metadata");
 var rewire = require("rewire");
@@ -18,7 +20,7 @@ var index_1 = require("../src/index");
 var dummy_1 = require("../examples/models/dummy");
 var panther_1 = require("../examples/models/panther");
 var zoo_1 = require("../examples/models/zoo");
-var data_1 = require("../examples/json/data");
+var data_2 = require("../examples/json/data");
 var tjs = rewire('../src/index');
 describe('Serializable', function () {
     it('should return false', function () {
@@ -40,10 +42,11 @@ describe('Serializable', function () {
 });
 describe('serialize', function () {
     it('should return true', function () {
-        chai_1.expect(index_1.serialize(data_1.deserializedData)).to.deep.equal(data_1.data);
+        chai_1.expect(index_1.serialize(data_2.deserializedData)).to.deep.equal(data_2.data);
+        chai_1.expect(index_1.serialize(data_1.deserializedPartyData)).to.deep.equal(data_2.partyData);
     });
     it('should return 1 childrenIdentifiers', function () {
-        var result = index_1.serialize(data_1.deserializedData, false);
+        var result = index_1.serialize(data_2.deserializedData, false);
         var count = result.Animals.filter(function (animal) {
             return (animal.hasOwnProperty('childrenIdentifiers'));
         }).length;
@@ -68,13 +71,18 @@ describe('serialize', function () {
 });
 describe('deserialize', function () {
     it('should return true', function () {
-        chai_1.expect(index_1.deserialize(data_1.data, zoo_1.Zoo)).to.deep.equal(data_1.deserializedData);
+        chai_1.expect(index_1.deserialize(data_2.data, zoo_1.Zoo)).to.deep.equal(data_2.deserializedData);
+        chai_1.expect(index_1.deserialize(data_2.partyData, party_1.Party)).to.deep.equal(data_1.deserializedPartyData);
     });
     it('should return true even if there are fake data included', function () {
-        var alteredData = __assign({}, data_1.data);
+        var alteredData = __assign({}, data_2.data);
         alteredData['fake'] = 'fake';
         alteredData['Animals'][0]['fake'] = 'fake';
-        chai_1.expect(index_1.deserialize(alteredData, zoo_1.Zoo)).to.deep.equal(data_1.deserializedData);
+        chai_1.expect(index_1.deserialize(alteredData, zoo_1.Zoo)).to.deep.equal(data_2.deserializedData);
+        var alteredPartyData = __assign({}, data_2.partyData);
+        alteredData['fake'] = 'fake';
+        alteredData['Animals'][0]['fake'] = 'fake';
+        chai_1.expect(index_1.deserialize(alteredPartyData, party_1.Party)).to.deep.equal(data_1.deserializedPartyData);
     });
     it('should return an empty zoo (except for the isOpen property)', function () {
         var badData = {

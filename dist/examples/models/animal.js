@@ -62,8 +62,14 @@ var Animal = /** @class */ (function () {
     __decorate([
         src_1.JsonProperty({
             name: 'rating',
-            dataDeserializationHandlers: [function (data) { return data * 2; }],
-            dataSerializationHandlers: [function (data) { return data / 2; }],
+            dataDeserializationHandlers: [
+                function (data) { return data * 2; },
+                function (data) { return data + 1; }
+            ],
+            dataSerializationHandlers: [
+                function (data) { return data - 1; },
+                function (data) { return data / 2; }
+            ],
             nameDeserializationHandlers: [nameDeserializationHandler],
             nameSerializationHandlers: [nameSerializationHandler]
         }),

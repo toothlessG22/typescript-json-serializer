@@ -13,7 +13,7 @@ var __assign = (this && this.__assign) || function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 var metadata_1 = require("./metadata");
-exports.Metadata = metadata_1.default;
+exports.Metadata = metadata_1.Metadata;
 var type_1 = require("./type");
 var init_logger_1 = require("./init-logger");
 var apiMap = 'api:map:';
@@ -222,7 +222,7 @@ function isSerializable(type) {
  * Function to transform the JsonProperty value into an object like {name: string, type: Function}
  */
 function getJsonPropertyValue(key, typeName, jsonPropertyInput) {
-    var metadata = new metadata_1.default();
+    var metadata = new metadata_1.Metadata();
     if (!jsonPropertyInput) {
         metadata.name = key.toString();
         return metadata;

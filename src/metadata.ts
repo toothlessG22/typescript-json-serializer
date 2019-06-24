@@ -2,10 +2,10 @@
 export class Metadata {
     public name: string;
     public predicate?: Function;
-    public nameSerializationHandlers?: Array<(parent: any, metadata: Metadata) => string>;
-    public nameDeserializationHandlers?: Array<(parent: any, metadata: Metadata, keyOptions: Array<string>) => string>;
-    public dataDeserializationHandlers?: Array<Function>;
-    public dataSerializationHandlers?: Array<Function>;
+    public nameDeserializationHandlers?: Array<NameDeserializationHandler>;
+    public nameSerializationHandlers?: Array<NameSerializationHandler>;
+    public dataDeserializationHandlers?: Array<DataHandler>;
+    public dataSerializationHandlers?: Array<DataHandler>;
     public type?: Function;
     public typeName: string;
 
@@ -13,4 +13,7 @@ export class Metadata {
 
     }
 }
-export default Metadata;
+
+export type NameDeserializationHandler = (parent: any, metadata: Metadata, keyOptions: Array<string>) => string;
+export type NameSerializationHandler = (parent: any, metadata: Metadata) => string;
+export type DataHandler = (data: any) => any;

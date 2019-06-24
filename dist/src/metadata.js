@@ -6,4 +6,3 @@ var Metadata = /** @class */ (function () {
     return Metadata;
 }());
 exports.Metadata = Metadata;
-exports.default = Metadata;

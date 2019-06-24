@@ -1,13 +1,13 @@
 import 'reflect-metadata';
-import Metadata from './metadata';
-export { Metadata };
+import { Metadata, DataHandler, NameDeserializationHandler, NameSerializationHandler } from './metadata';
+export { Metadata, DataHandler, NameDeserializationHandler, NameSerializationHandler };
 export interface JsonPropertyInput {
     name?: string;
     predicate?: Function;
-    nameSerializationHandlers?: Array<(parent: any, metadata: Metadata) => string>;
-    nameDeserializationHandlers?: Array<(parent: any, metadata: Metadata, keyOptions: Array<string>) => string>;
-    dataDeserializationHandlers?: Array<Function>;
-    dataSerializationHandlers?: Array<Function>;
+    nameSerializationHandlers?: Array<NameSerializationHandler>;
+    nameDeserializationHandlers?: Array<NameDeserializationHandler>;
+    dataDeserializationHandlers?: Array<DataHandler>;
+    dataSerializationHandlers?: Array<DataHandler>;
     type?: Function;
 }
 /**
